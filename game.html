@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Let's Play — Quiz & Carousel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:linear-gradient(180deg,#fef8fb,#fff);color:#222;padding:32px 24px}
+    .topbar{max-width:1400px;margin:0 auto 24px;display:flex;align-items:center;gap:12px}
+    .back{color:#7b0f2f;text-decoration:none;font-weight:700;font-size:16px}
+    .title-section{flex:1;text-align:center}
+    .title-section h1{margin:0;font-family:'Playfair Display',serif;color:#7b0f2f;font-size:32px}
+
+    /* Carousel at top - full width */
+    .carousel-wrap{max-width:1400px;margin:0 auto 32px;border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(123,15,47,0.2)}
+    .carousel{position:relative;height:460px;background:linear-gradient(135deg,#c63b6a 0%,#7b0f2f 50%,#5a0d24 100%);display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .slides{display:flex;transition:transform 0.6s cubic-bezier(0.4,0.0,0.2,1);width:100%}
+    .slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(198,59,106,0.1),rgba(123,15,47,0.05));overflow:hidden;position:relative}
+    .slide::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(255,255,255,0.08),transparent);pointer-events:none}
+    .slide img{max-width:90%;max-height:430px;width:auto;height:auto;display:block;object-fit:contain;filter:drop-shadow(0 20px 40px rgba(0,0,0,0.3));position:relative;z-index:1}
+    .controls{position:absolute;left:12px;right:12px;top:12px;display:flex;justify-content:space-between;pointer-events:none;z-index:10}
+    .btn-ctrl{pointer-events:auto;background:rgba(255,255,255,0.9);border-radius:8px;padding:10px 14px;color:#7b0f2f;border:none;font-weight:700;cursor:pointer;font-size:14px;transition:all 0.3s}
+    .btn-ctrl:hover{background:rgba(255,255,255,1);transform:scale(1.05)}
+    .slide-counter{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);color:white;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600}
+
+    /* Main content grid */
+    .content-wrap{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:28px}
+
+    /* Left: Quiz */
+    .quiz-section{background:white;border-radius:14px;padding:28px;box-shadow:0 10px 40px rgba(123,15,47,0.08);border:1px solid #f3e6ea}
+    .quiz-section h2{margin:0 0 6px;font-family:'Playfair Display',serif;color:#7b0f2f;font-size:24px}
+    .quiz-subtitle{color:#8a6b7c;font-size:13px;margin-bottom:16px}
+    
+    .section{display:none}
+    .section.active{display:block;animation:fadeIn 0.4s}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    
+    .section-header{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #f3e6ea}
+    .section-header h3{margin:0;color:#7b0f2f;font-size:16px;font-weight:700}
+    
+    .q{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed rgba(123,15,47,0.1)}
+    .q:last-child{border-bottom:none}
+    .q label{font-weight:700;color:#2b0f25;font-size:14px;line-height:1.4}
+    .q select{padding:8px 10px;border-radius:8px;border:1.5px solid #e9dfe4;font-family:inherit;font-size:13px;background:white;color:#222;transition:all 0.2s}
+    .q select:focus{outline:none;border-color:#c63b6a;box-shadow:0 0 0 2px rgba(198,59,106,0.1)}
+    
+    .quiz-actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px;padding-top:14px;border-top:1px solid #f3e6ea}
+    .progress-text{color:#8a6b7c;font-size:12px;font-weight:600}
+    .action-btns{display:flex;gap:8px}
+    .btn-primary{background:#c63b6a;color:white;padding:10px 16px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:13px;transition:all 0.3s}
+    .btn-primary:hover{background:#a52f55;transform:translateY(-1px);box-shadow:0 6px 16px rgba(198,59,106,0.3)}
+    .btn-secondary{background:transparent;color:#7b0f2f;padding:8px 12px;border-radius:8px;border:1px solid #e9dfe4;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.3s}
+    .btn-secondary:hover{background:#fef8fb;border-color:#c63b6a}
+
+    /* Right: Table */
+    .table-section{background:white;border-radius:14px;padding:28px;box-shadow:0 10px 40px rgba(123,15,47,0.08);border:1px solid #f3e6ea;display:flex;flex-direction:column}
+    .table-section h2{margin:0 0 6px;font-family:'Playfair Display',serif;color:#7b0f2f;font-size:24px}
+    .table-subtitle{color:#8a6b7c;font-size:13px;margin-bottom:16px}
+    .table-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+    #savedCount{color:#8a6b7c;font-size:12px;font-weight:600}
+    .last-saved{margin-top:12px;font-size:12px;color:#6f5a68;background:#fef8fb;padding:10px;border-radius:8px;border:1px dashed #e9dfe4;line-height:1.5}
+    
+    .table-container{overflow:auto;flex:1}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:left;padding:10px;border-bottom:2px solid #e9dfe4;color:#7b0f2f;font-weight:700;background:#fef8fb}
+    td{padding:10px;border-bottom:1px solid #f3e6ea;color:#5a5a5a}
+    tr:hover{background:#fef8fb}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:1000}
+    .modal .card{width:420px;padding:24px;border-radius:14px;background:white;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+    .modal h3{margin:0 0 8px;color:#7b0f2f;font-family:'Playfair Display',serif;font-size:22px}
+    .modal img{max-width:200px;border-radius:12px;margin:16px 0}
+    .close-btn{background:#7b0f2f;color:white;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:700;margin-top:12px}
+
+    @media (max-width:1200px){
+      .content-wrap{grid-template-columns:1fr}
+      .carousel{height:380px}
+      .slide img{max-height:350px}
+    }
+    @media (max-width:768px){
+      .topbar{flex-direction:column;gap:8px;margin-bottom:16px}
+      .back{font-size:14px}
+      .title-section h1{font-size:24px}
+      .content-wrap{grid-template-columns:1fr;gap:16px;max-width:100%}
+      body{padding:16px 12px}
+      .carousel-wrap{margin:0 auto 24px;border-radius:12px}
+      .carousel{height:320px;border-radius:12px}
+      .slide img{max-height:300px}
+      .controls{left:8px;right:8px;top:8px}
+      .btn-ctrl{padding:8px 10px;font-size:12px;border-radius:6px}
+      .quiz-section,.table-section{padding:16px;border-radius:12px;margin-bottom:12px}
+      .quiz-section h2,.table-section h2{font-size:20px;margin-bottom:4px}
+      .quiz-subtitle{font-size:12px;margin-bottom:12px}
+      .section-header{margin-bottom:10px}
+      .section-header h3{font-size:15px}
+      .q{margin-bottom:10px;padding-bottom:10px}
+      .q label{font-size:13px}
+      .q select{padding:7px 8px;font-size:12px;border-radius:6px}
+      .quiz-actions{gap:6px;margin-top:12px;padding-top:10px}
+      .progress-text{font-size:11px}
+      .btn-primary,.btn-secondary{font-size:12px;padding:9px 12px}
+      table{font-size:12px}
+      th,td{padding:6px}
+      .slide-counter{font-size:11px;padding:4px 8px}
+      .modal .card{width:90%;max-width:360px;padding:20px}
+    }
+    @media (max-width:480px){
+      body{padding:12px 8px}
+      .topbar{gap:4px;margin-bottom:12px}
+      .back{font-size:12px}
+      .title-section h1{font-size:20px;margin:0}
+      .carousel-wrap{margin:0 auto 16px;border-radius:10px}
+      .carousel{height:260px;border-radius:10px}
+      .slide img{max-height:240px}
+      .controls{left:6px;right:6px;top:6px}
+      .btn-ctrl{padding:6px 8px;font-size:11px;border-radius:5px}
+      .slide-counter{font-size:10px;padding:3px 6px;bottom:8px;right:8px}
+      .content-wrap{gap:8px;max-width:100%}
+      .quiz-section,.table-section{padding:12px;border-radius:10px;margin-bottom:8px}
+      .quiz-section h2,.table-section h2{font-size:18px}
+      .quiz-subtitle{font-size:11px}
+      .section-header{margin-bottom:8px;padding-bottom:8px;gap:4px}
+      .section-header h3{font-size:13px}
+      .q{margin-bottom:8px;padding-bottom:8px}
+      .q label{font-size:12px;line-height:1.3}
+      .q select{padding:6px 6px;font-size:11px;border-radius:5px}
+      .quiz-actions{flex-direction:column;gap:4px;margin-top:8px;padding-top:8px}
+      .action-btns{width:100%;gap:4px}
+      .progress-text{font-size:10px}
+      .btn-primary,.btn-secondary{font-size:11px;padding:8px 10px;border-radius:6px}
+      table{font-size:10px}
+      th,td{padding:4px}
+      .table-actions{flex-wrap:wrap;gap:4px}
+      .last-saved{font-size:11px;padding:8px;margin-top:8px}
+      .modal{padding:12px}
+      .modal .card{width:95%;max-width:100%;padding:16px;border-radius:10px}
+      .modal h3{font-size:20px;margin-bottom:8px}
+      .modal p{font-size:12px}
+      .modal img{max-width:180px}
+    }
+  </style>
+</head>
+<body>
+  <!-- Name Input Modal -->
+  <div class="modal" id="nameModal" style="display:flex">
+    <div class="card">
+      <div style="position:relative">
+        <h3 style="margin-top:0">Welcome! 💝</h3>
+        <div style="color:#8a6b7c;margin:8px 0;font-size:14px">What's your name?</div>
+        <input type="text" id="nameInput" placeholder="Enter your name" style="width:100%;padding:10px;margin:12px 0;border:1.5px solid #e9dfe4;border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box" required>
+        <div id="nameError" style="color:#d32f2f;font-size:12px;display:none;margin-top:4px">Name is required!</div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn-primary" id="startQuiz" style="flex:1;margin:0">Start Quiz</button>
+          <button class="btn-secondary" onclick="goHome()" style="flex:1">🏠 Home</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <a class="back" href="index.html">← Back</a>
+    <div class="title-section">
+      <h1>💕 Let Me Know You Better 💕</h1>
+    </div>
+    <a class="back" href="index.html" style="color:#c63b6a">🏠 Home</a>
+  </div>
+
+  <!-- Carousel: Full width on top -->
+  <div class="carousel-wrap">
+    <div class="carousel">
+      <div class="controls">
+        <button class="btn-ctrl" id="prev">← Prev</button>
+        <button class="btn-ctrl" id="next">Next →</button>
+      </div>
+      <div class="slides" id="slides">
+        <!-- Using actual images from the images/ folder -->
+        <div class="slide"><img src="images/virat-kohli-and-anushka-sharma-1698729318.jpg" alt="slide1"></div>
+        <div class="slide"><img src="images/virat-kohli-anushka-sharma.jpg" alt="slide2"></div>
+        <div class="slide"><img src="images/Kohli-Anushka-4ITG-1748983672808-scaled.avif" alt="slide3"></div>
+        <div class="slide"><img src="images/bp896oc_anushka-sharma_625x300_02_June_25.webp" alt="slide4"></div>
+      </div>
+      <div class="slide-counter"><span id="slideNum">1</span> / 4</div>
+    </div>
+  </div>
+
+  <!-- Main content: Quiz (left) + Table (right) -->
+  <div class="content-wrap">
+    <!-- Left: Quiz -->
+    <div class="quiz-section">
+      <h2>Quiz</h2>
+      <div class="quiz-subtitle">(No right or wrong answers… just vibes 😌)</div>
+
+      <!-- Section 1 -->
+      <div class="section active" id="section1">
+        <div class="section-header"><span>🌸</span> <h3>Section 1: Basic (4 Qs)</h3></div>
+        <div class="q"><label>1. What kind of attention do you enjoy?</label>
+          <select data-q="1"><option value="">Select</option><option value="A">Sweet and caring 💗</option><option value="B">Playful teasing 😄</option><option value="C">Quiet moments 🌙</option><option value="D">Mix of sweet & flirty 😌</option></select></div>
+        <div class="q"><label>2. When someone flirts, you feel…</label>
+          <select data-q="2"><option value="">Select</option><option value="A">Shy but happy 😊</option><option value="B">Excited 😏</option><option value="C">Curious 👀</option><option value="D">Confident 💃</option></select></div>
+        <div class="q"><label>3. What attracts first?</label>
+          <select data-q="3"><option value="">Select</option><option value="A">Kindness 💞</option><option value="B">Humor 😄</option><option value="C">Eyes & smile 👁️✨</option><option value="D">Confidence 🔥</option></select></div>
+        <div class="q"><label>4. How express interest?</label>
+          <select data-q="4"><option value="">Select</option><option value="A">Subtle hints 😉</option><option value="B">Text more 📱</option><option value="C">Compliments 💌</option><option value="D">Clear signals 😏</option></select></div>
+        <div class="quiz-actions">
+          <div class="progress-text">Section 1 / 3</div>
+          <div class="action-btns">
+            <button class="btn-secondary" id="skip1">Reset</button>
+            <button class="btn-primary" id="next1">Next →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="section" id="section2">
+        <div class="section-header"><span>🔥</span> <h3>Section 2: Advanced (4 Qs)</h3></div>
+        <div class="q"><label>5. What flirting style?</label>
+          <select data-q="5"><option value="">Select</option><option value="A">Cute 😇</option><option value="B">Playful 😄</option><option value="C">Intense tension 👀</option><option value="D">Bold 😏</option></select></div>
+        <div class="q"><label>6. Alone together, prefer?</label>
+          <select data-q="6"><option value="">Select</option><option value="A">Talk hours 🌙</option><option value="B">Music vibes 🎶</option><option value="C">Comfortable silence 💞</option><option value="D">Flirty moments 😌</option></select></div>
+        <div class="q"><label>7. What compliments melt you?</label>
+          <select data-q="7"><option value="">Select</option><option value="A">Personality 💗</option><option value="B">Smile 😊</option><option value="C">How I make feel 💫</option><option value="D">Soft whispered 😏</option></select></div>
+        <div class="q"><label>8. Taking the lead?</label>
+          <select data-q="8"><option value="">Select</option><option value="A">Prefer following 😊</option><option value="B">Depends 🤍</option><option value="C">Enjoy switching 😉</option><option value="D">Bold when safe 😌</option></select></div>
+        <div class="quiz-actions">
+          <div class="progress-text">Section 2 / 3</div>
+          <div class="action-btns">
+            <button class="btn-secondary" id="back2">← Back</button>
+            <button class="btn-primary" id="next2">Next →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="section" id="section3">
+        <div class="section-header"><span>😈</span> <h3>Section 3: Extreme (4 Qs)</h3></div>
+        <div class="q"><label>9. What tension excites?</label>
+          <select data-q="9"><option value="">Select</option><option value="A">Emotional 💕</option><option value="B">Looks 👀</option><option value="C">Almost-touching 😏</option><option value="D">Words unnecessary 🔥</option></select></div>
+        <div class="q"><label>10. Exploring fantasies?</label>
+          <select data-q="10"><option value="">Select</option><option value="A">Curious, shy 😊</option><option value="B">Slow open 🌙</option><option value="C">Trust needed 💞</option><option value="D">Playful talks 😈</option></select></div>
+        <div class="q"><label>11. Secret vibe?</label>
+          <select data-q="11"><option value="">Select</option><option value="A">Romantic 🌹</option><option value="B">Teasing 😌</option><option value="C">Intense 🔥</option><option value="D">Keep guessing 😏</option></select></div>
+        <div class="q"><label>12. Most desired feeling?</label>
+          <select data-q="12"><option value="">Select</option><option value="A">Chosen 💗</option><option value="B">Admired 😊</option><option value="C">Flirted boldly 😘</option><option value="D">Understood 😈</option></select></div>
+        <div class="quiz-actions">
+          <div class="progress-text">Section 3 / 3</div>
+          <div class="action-btns">
+            <button class="btn-secondary" id="back3">← Back</button>
+            <button class="btn-primary" id="finish">✨ Finish</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Answers Table -->
+    <div class="table-section">
+      <h2>Recorded Answers</h2>
+      <div class="table-subtitle">Your responses will appear here</div>
+      <div class="table-actions">
+        <button class="btn-secondary" id="downloadCsv">Download responses (CSV)</button>
+        <div id="savedCount">Saved responses: 0</div>
+      </div>
+      <div class="table-container">
+        <table id="answersTable">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>Question</th>
+              <th>Answer</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="last-saved" id="lastSaved" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Wrong answer -->
+  <div class="modal" id="modal">
+    <div class="card">
+      <h3>Waah shampy Wahh 😏</h3>
+      <div style="color:#8a6b7c;margin:8px 0">Nice try!</div>
+      <img src="https://i.imgur.com/OY6m6Gv.png" alt="cringe baby" />
+      <button class="close-btn" id="closeModal">Understood!</button>
+      <button class="close-btn" onclick="goHome()" style="background:#6b6b6b;margin-left:8px">🏠 Go Home</button>
+    </div>
+  </div>
+
+  <script>
+    // ==================== CONFIGURE THIS ====================
+    // Replace with your Google Apps Script Web App URL
+    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzbzAFopRUPv1D4X_YNKpyR-ESsDiSjp019EfVQ0JPgCvtJAltCVMNBjfDf9Y-1iXfuZA/exec';
+    // =========================================================
+
+    let respondentName = '';
+    const answers = {};
+    const LOCAL_KEY = 'valentineQuizResponsesV1';
+
+    // ==================== NAME MODAL ====================
+    document.getElementById('startQuiz').addEventListener('click', () => {
+      respondentName = document.getElementById('nameInput').value.trim();
+      const errorDiv = document.getElementById('nameError');
+      
+      if(!respondentName){
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      errorDiv.style.display = 'none';
+      // Store name in sessionStorage to pass to final.html
+      sessionStorage.setItem('respondentName', respondentName);
+      document.getElementById('nameModal').style.display = 'none';
+    });
+
+    // Handle Enter key in name input
+    document.getElementById('nameInput').addEventListener('keypress', (e) => {
+      if(e.key === 'Enter') document.getElementById('startQuiz').click();
+    });
+
+    // ==================== LOCAL STORAGE ====================
+    function getLocalResponses(){
+      try{
+        return JSON.parse(localStorage.getItem(LOCAL_KEY)) || [];
+      }catch(e){
+        return [];
+      }
+    }
+
+    function saveLocalResponse(){
+      const list = getLocalResponses();
+      const cleanName = respondentName ? respondentName.trim() : 'Anonymous';
+      list.push({
+        name: cleanName,
+        answers: {...answers}
+      });
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+      updateSavedUI(list);
+    }
+
+    function updateSavedUI(list){
+      const savedCountEl = document.getElementById('savedCount');
+      const lastSavedEl = document.getElementById('lastSaved');
+      if(savedCountEl) savedCountEl.textContent = `Saved responses: ${list.length}`;
+      if(!lastSavedEl) return;
+      if(!list.length){
+        lastSavedEl.style.display = 'none';
+        lastSavedEl.textContent = '';
+        return;
+      }
+      const last = list[list.length - 1];
+      const answerPreview = Object.keys(last.answers)
+        .sort((a,b)=>Number(a)-Number(b))
+        .map(q => `Q${q}: ${last.answers[q] || ''}`)
+        .join(' · ');
+      lastSavedEl.style.display = 'block';
+      lastSavedEl.textContent = `Last saved — ${last.name}: ${answerPreview}`;
+    }
+
+    function downloadCsv(){
+      const list = getLocalResponses();
+      if(!list.length){
+        alert('No saved responses yet.');
+        return;
+      }
+      const headers = ['Name'];
+      for(let i=1;i<=12;i++) headers.push(`Q${i}`);
+      const rows = [headers.join(',')];
+      list.forEach(item => {
+        const row = [item.name || 'Anonymous'];
+        for(let i=1;i<=12;i++) row.push(item.answers?.[i] || '');
+        rows.push(row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+      });
+      const csv = rows.join('\n');
+      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'quiz-responses.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('downloadCsv').addEventListener('click', downloadCsv);
+    updateSavedUI(getLocalResponses());
+    const slides = document.getElementById('slides');
+    const slideElems = slides.querySelectorAll('.slide');
+    let idx = 0;
+
+    function showSlide(){
+      slides.style.transform = `translateX(${-idx * 100}%)`;
+      document.getElementById('slideNum').textContent = idx + 1;
+    }
+
+    document.getElementById('prev').addEventListener('click', ()=>{
+      idx = (idx - 1 + slideElems.length) % slideElems.length;
+      showSlide();
+    });
+
+    document.getElementById('next').addEventListener('click', ()=>{
+      idx = (idx + 1) % slideElems.length;
+      showSlide();
+    });
+
+    // Auto-advance carousel every 5s
+    setInterval(()=>{ idx = (idx + 1) % slideElems.length; showSlide(); }, 5000);
+
+    // ==================== QUIZ LOGIC ====================
+    const questionTexts = {
+      1: 'What kind of attention do you enjoy?',
+      2: 'When someone flirts, you feel…',
+      3: 'What attracts first?',
+      4: 'How express interest?',
+      5: 'What flirting style?',
+      6: 'Alone together, prefer?',
+      7: 'What compliments melt you?',
+      8: 'Taking the lead?',
+      9: 'What tension excites?',
+      10: 'Exploring fantasies?',
+      11: 'Secret vibe?',
+      12: 'Most desired feeling?'
+    };
+
+    const optionMap = {
+      '1': {'A':'Sweet and caring 💗','B':'Playful teasing 😄','C':'Quiet moments 🌙','D':'Mix of sweet & flirty 😌'},
+      '2': {'A':'Shy but happy 😊','B':'Excited 😏','C':'Curious 👀','D':'Confident 💃'},
+      '3': {'A':'Kindness 💞','B':'Humor 😄','C':'Eyes & smile 👁️✨','D':'Confidence 🔥'},
+      '4': {'A':'Subtle hints 😉','B':'Text more 📱','C':'Compliments 💌','D':'Clear signals 😏'},
+      '5': {'A':'Cute 😇','B':'Playful 😄','C':'Intense tension 👀','D':'Bold 😏'},
+      '6': {'A':'Talk hours 🌙','B':'Music vibes 🎶','C':'Comfortable silence 💞','D':'Flirty moments 😌'},
+      '7': {'A':'Personality 💗','B':'Smile 😊','C':'How I make feel 💫','D':'Soft whispered 😏'},
+      '8': {'A':'Prefer following 😊','B':'Depends 🤍','C':'Enjoy switching 😉','D':'Bold when safe 😌'},
+      '9': {'A':'Emotional 💕','B':'Looks 👀','C':'Almost-touching 😏','D':'Words unnecessary 🔥'},
+      '10':{'A':'Curious, shy 😊','B':'Slow open 🌙','C':'Trust needed 💞','D':'Playful talks 😈'},
+      '11':{'A':'Romantic 🌹','B':'Teasing 😌','C':'Intense 🔥','D':'Keep guessing 😏'},
+      '12':{'A':'Chosen 💗','B':'Admired 😊','C':'Flirted boldly 😘','D':'Understood 😈'}
+    };
+
+    function collectValues(sectionEl){
+      const selects = sectionEl.querySelectorAll('select[data-q]');
+      const missing = [];
+      selects.forEach(s => { if(!s.value) missing.push(s.dataset.q); });
+      if(missing.length) return {ok:false};
+      selects.forEach(s => { 
+        answers[s.dataset.q] = s.value; 
+        updateTableRow(s.dataset.q, s.value);
+      });
+      return {ok:true};
+    }
+
+    function updateTableRow(q, val){
+      const tbody = document.querySelector('#answersTable tbody');
+      let row = document.querySelector(`#row-${q}`);
+      const text = (optionMap[q] && optionMap[q][val]) ? optionMap[q][val] : val;
+      if(row){ row.children[2].textContent = text; return; }
+      row = document.createElement('tr');
+      row.id = `row-${q}`;
+      row.innerHTML = `<td>${q}</td><td>${questionTexts[q]}</td><td>${text}</td>`;
+      tbody.appendChild(row);
+    }
+
+    // Section navigation
+    document.getElementById('next1').addEventListener('click', ()=>{
+      if(!collectValues(document.getElementById('section1')).ok){
+        alert('⚠️ Please answer all questions in Section 1');
+        return;
+      }
+      document.getElementById('section1').classList.remove('active');
+      document.getElementById('section2').classList.add('active');
+    });
+
+    document.getElementById('back2').addEventListener('click', ()=>{
+      document.getElementById('section2').classList.remove('active');
+      document.getElementById('section1').classList.add('active');
+    });
+
+    document.getElementById('next2').addEventListener('click', ()=>{
+      if(!collectValues(document.getElementById('section2')).ok){
+        alert('⚠️ Please answer all questions in Section 2');
+        return;
+      }
+      document.getElementById('section2').classList.remove('active');
+      document.getElementById('section3').classList.add('active');
+    });
+
+    document.getElementById('back3').addEventListener('click', ()=>{
+      document.getElementById('section3').classList.remove('active');
+      document.getElementById('section2').classList.add('active');
+    });
+
+    document.getElementById('finish').addEventListener('click', ()=>{
+      if(!collectValues(document.getElementById('section3')).ok){
+        alert('⚠️ Please answer all questions in Section 3');
+        return;
+      }
+      saveLocalResponse();
+      // Send data to Google Sheets via Apps Script
+      submitToGoogleSheet();
+      alert('✨ Thank you! All answers recorded. Check the table on the right!');
+      document.querySelector('.table-container').scrollIntoView({behavior:'smooth'});
+      setTimeout(() => {
+        const goFurther = confirm('💖 Ready for the final question? 💖');
+        if(goFurther) window.location.href = 'final.html';
+      }, 1000);
+    });
+
+    document.getElementById('skip1').addEventListener('click', ()=>{
+      document.querySelectorAll('#section1 select').forEach(s => s.value = '');
+    });
+
+    document.getElementById('closeModal').addEventListener('click', ()=>{
+      document.getElementById('modal').style.display = 'none';
+    });
+
+    // ==================== GOOGLE SHEETS SUBMISSION ====================
+    function submitToGoogleSheet(){
+      if(!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){
+        console.warn('⚠️ Google Apps Script URL not configured.');
+        return;
+      }
+      
+      // Send name + all 12 answers (full text)
+      const payload = {
+        name: respondentName,
+        answers: {},
+        questions: questionTexts
+      };
+
+      // Collect all answer texts and store in sessionStorage for flower
+      const allAnswerTexts = [];
+      for(let i = 1; i <= 12; i++){
+        const ansKey = answers[i];
+        const optionText = (optionMap[i] && optionMap[i][ansKey]) ? optionMap[i][ansKey] : '';
+        payload.answers[i] = optionText;
+        // Extract just the key words from answer (remove emojis for variety)
+        const words = optionText.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim().split(/\s+/);
+        allAnswerTexts.push(...words);
+      }
+      
+      // Store answer words in sessionStorage for the flower
+      sessionStorage.setItem('quizAnswerWords', JSON.stringify(allAnswerTexts));
+
+      fetch(GOOGLE_APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        keepalive: true,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        console.log('✅ Responses submitted to Google Sheets');
+      })
+      .catch(error => {
+        console.warn('⚠️ Could not submit to Google Sheets:', error);
+      });
+    }
+
+    function goHome(){
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
