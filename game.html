@@ -3,680 +3,666 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Let's Play — Quiz & Carousel</title>
+  <title>💖 Final Question 💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box}
     body{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:linear-gradient(180deg,#fef8fb,#fff);color:#222;padding:32px 24px}
+    
     .topbar{max-width:1400px;margin:0 auto 24px;display:flex;align-items:center;gap:12px}
-    .back{color:#7b0f2f;text-decoration:none;font-weight:700;font-size:16px}
-    .title-section{flex:1;text-align:center}
-    .title-section h1{margin:0;font-family:'Playfair Display',serif;color:#7b0f2f;font-size:32px}
-
-    /* Carousel at top - full width */
-    .carousel-wrap{max-width:1400px;margin:0 auto 32px;border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(123,15,47,0.2)}
-    .carousel{position:relative;height:460px;background:linear-gradient(135deg,#c63b6a 0%,#7b0f2f 50%,#5a0d24 100%);display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .slides{display:flex;transition:transform 0.6s cubic-bezier(0.4,0.0,0.2,1);width:100%}
-    .slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(198,59,106,0.1),rgba(123,15,47,0.05));overflow:hidden;position:relative}
-    .slide::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(255,255,255,0.08),transparent);pointer-events:none}
-    .slide img{max-width:90%;max-height:430px;width:auto;height:auto;display:block;object-fit:contain;filter:drop-shadow(0 20px 40px rgba(0,0,0,0.3));position:relative;z-index:1}
-    .controls{position:absolute;left:12px;right:12px;top:12px;display:flex;justify-content:space-between;pointer-events:none;z-index:10}
-    .btn-ctrl{pointer-events:auto;background:rgba(255,255,255,0.9);border-radius:8px;padding:10px 14px;color:#7b0f2f;border:none;font-weight:700;cursor:pointer;font-size:14px;transition:all 0.3s}
-    .btn-ctrl:hover{background:rgba(255,255,255,1);transform:scale(1.05)}
-    .slide-counter{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);color:white;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600}
-
-    /* Main content grid */
-    .content-wrap{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:28px}
-
-    /* Left: Quiz */
-    .quiz-section{background:white;border-radius:14px;padding:28px;box-shadow:0 10px 40px rgba(123,15,47,0.08);border:1px solid #f3e6ea}
-    .quiz-section h2{margin:0 0 6px;font-family:'Playfair Display',serif;color:#7b0f2f;font-size:24px}
-    .quiz-subtitle{color:#8a6b7c;font-size:13px;margin-bottom:16px}
+    .back{color:#7b0f2f;text-decoration:none;font-weight:700;font-size:16px;transition:all 0.3s}
+    .back:hover{transform:translateX(-2px)}
     
-    .section{display:none}
-    .section.active{display:block;animation:fadeIn 0.4s}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .content-wrap{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
     
-    .section-header{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #f3e6ea}
-    .section-header h3{margin:0;color:#7b0f2f;font-size:16px;font-weight:700}
+    /* Left: Portrait */
+    .portrait-section{text-align:center}
+    .portrait-container{max-width:400px;margin:0 auto;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(123,15,47,0.2);background:linear-gradient(135deg,#ffd6e0,#fff6f8)}
+    .portrait-container img{width:100%;height:auto;display:block;max-width:380px}
     
-    .q{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed rgba(123,15,47,0.1)}
-    .q:last-child{border-bottom:none}
-    .q label{font-weight:700;color:#2b0f25;font-size:14px;line-height:1.4}
-    .q select{padding:8px 10px;border-radius:8px;border:1.5px solid #e9dfe4;font-family:inherit;font-size:13px;background:white;color:#222;transition:all 0.2s}
-    .q select:focus{outline:none;border-color:#c63b6a;box-shadow:0 0 0 2px rgba(198,59,106,0.1)}
+    /* Right: Final Question */
+    .final-section{background:white;border-radius:16px;padding:40px;box-shadow:0 20px 60px rgba(123,15,47,0.1);border:2px solid #f3e6ea}
+    .final-section h1{margin:0 0 8px;font-family:'Playfair Display',serif;color:#7b0f2f;font-size:32px;text-align:center}
+    .final-emoji{font-size:28px;text-align:center;margin:0 0 16px}
+    .question-text{color:#5a5a5a;font-size:18px;text-align:center;margin:24px 0 32px;line-height:1.6}
     
-    .quiz-actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px;padding-top:14px;border-top:1px solid #f3e6ea}
-    .progress-text{color:#8a6b7c;font-size:12px;font-weight:600}
-    .action-btns{display:flex;gap:8px}
-    .btn-primary{background:#c63b6a;color:white;padding:10px 16px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-size:13px;transition:all 0.3s}
-    .btn-primary:hover{background:#a52f55;transform:translateY(-1px);box-shadow:0 6px 16px rgba(198,59,106,0.3)}
-    .btn-secondary{background:transparent;color:#7b0f2f;padding:8px 12px;border-radius:8px;border:1px solid #e9dfe4;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.3s}
-    .btn-secondary:hover{background:#fef8fb;border-color:#c63b6a}
-
-    /* Right: Table */
-    .table-section{background:white;border-radius:14px;padding:28px;box-shadow:0 10px 40px rgba(123,15,47,0.08);border:1px solid #f3e6ea;display:flex;flex-direction:column}
-    .table-section h2{margin:0 0 6px;font-family:'Playfair Display',serif;color:#7b0f2f;font-size:24px}
-    .table-subtitle{color:#8a6b7c;font-size:13px;margin-bottom:16px}
-    .table-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-    #savedCount{color:#8a6b7c;font-size:12px;font-weight:600}
-    .last-saved{margin-top:12px;font-size:12px;color:#6f5a68;background:#fef8fb;padding:10px;border-radius:8px;border:1px dashed #e9dfe4;line-height:1.5}
+    .options{display:flex;flex-direction:column;gap:12px}
+    .option-btn{padding:16px 20px;border:2px solid #e9dfe4;border-radius:12px;background:white;color:#222;font-weight:600;font-size:16px;cursor:pointer;transition:all 0.3s;text-align:left;font-family:inherit}
+    .option-btn:hover{background:#fef8fb;border-color:#c63b6a;transform:translateX(4px);box-shadow:0 4px 12px rgba(198,59,106,0.15)}
+    .option-btn:active{transform:translateX(2px)}
+    .option-btn.active{background:#c63b6a;color:white;border-color:#c63b6a}
     
-    .table-container{overflow:auto;flex:1}
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th{text-align:left;padding:10px;border-bottom:2px solid #e9dfe4;color:#7b0f2f;font-weight:700;background:#fef8fb}
-    td{padding:10px;border-bottom:1px solid #f3e6ea;color:#5a5a5a}
-    tr:hover{background:#fef8fb}
-
     /* Modal */
-    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:1000}
-    .modal .card{width:420px;padding:24px;border-radius:14px;background:white;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
-    .modal h3{margin:0 0 8px;color:#7b0f2f;font-family:'Playfair Display',serif;font-size:22px}
-    .modal img{max-width:200px;border-radius:12px;margin:16px 0}
-    .close-btn{background:#7b0f2f;color:white;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:700;margin-top:12px}
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:1000}
+    .modal.show{display:flex}
+    .modal .card{width:480px;padding:32px;border-radius:16px;background:white;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.3);max-height:90vh;overflow-y:auto}
+    .modal h3{margin:0 0 12px;color:#7b0f2f;font-family:'Playfair Display',serif;font-size:26px}
+    .modal p{color:#8a6b7c;margin:8px 0;font-size:15px}
+    .modal img{max-width:280px;border-radius:12px;margin:20px 0;max-height:400px;object-fit:contain}
+    .close-btn{background:#7b0f2f;color:white;padding:12px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:700;margin-top:16px;transition:all 0.3s}
+    .close-btn:hover{background:#a52f55;transform:translateY(-2px)}
+    .close-btn:active{transform:translateY(0)}
+    
+    /* Video Modal */
+    .video-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:1001}
+    .video-modal.show{display:flex}
+    .video-card{width:90%;max-width:800px;background:white;border-radius:16px;overflow:hidden;box-shadow:0 30px 100px rgba(0,0,0,0.5)}
+    .video-header{padding:20px;background:#7b0f2f;color:white;font-weight:700;font-size:18px;display:flex;justify-content:space-between;align-items:center}
+    .video-close{background:none;border:none;color:white;font-size:24px;cursor:pointer;font-weight:700;transition:all 0.3s}
+    .video-close:hover{transform:scale(1.2)}
+    .video-frame{width:100%;aspect-ratio:16/9;background:#000}
+    video{width:100%;height:100%;display:block}
 
-    @media (max-width:1200px){
-      .content-wrap{grid-template-columns:1fr}
-      .carousel{height:380px}
-      .slide img{max-height:350px}
+    /* Flower Bouquet Modal */
+    .flower-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);z-index:1002;backdrop-filter:blur(2px);overflow-y:auto;padding:16px}
+    .flower-modal.show{display:flex;animation:fadeInModal 0.4s ease-out}
+    @keyframes fadeInModal{from{opacity:0}to{opacity:1}}
+    .flower-container{position:relative;width:520px;height:640px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;animation:bloom 0.8s cubic-bezier(0.34,1.56,0.64,1);background:linear-gradient(135deg, #fff8fc 0%, #fffbfd 100%);border-radius:24px;box-shadow:0 30px 80px rgba(123,15,47,0.25), inset 0 1px 0 rgba(255,255,255,0.8);padding:28px;overflow:hidden;border:2px solid rgba(198,59,106,0.15);margin:auto}
+    @keyframes bloom{from{transform:scale(0.3);opacity:0;filter:blur(10px)}to{transform:scale(1);opacity:1;filter:blur(0)}}
+    .flower-header{text-align:center;margin-bottom:14px;z-index:20}
+    .flower-header-name{font-family:'Playfair Display',serif;font-size:28px;color:#7b0f2f;font-weight:700;margin:0 0 4px;text-shadow:1px 1px 3px rgba(198,59,106,0.1);letter-spacing:0.5px}
+    .flower-header-text1{font-family:Poppins,sans-serif;font-size:13px;font-weight:700;background:linear-gradient(135deg, #c63b6a, #e85a8a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:4px 0;letter-spacing:0.5px}
+    .flower-header-text2{font-family:Poppins,sans-serif;font-size:16px;font-weight:800;color:#c63b6a;margin:4px 0 0;letter-spacing:2px;animation:bounce 1.2s ease-in-out infinite}
+    @keyframes bounce{0%{transform:translateY(0)}50%{transform:translateY(-5px)}100%{transform:translateY(0)}}
+    .flower-stem{position:absolute;bottom:0;width:6px;height:130px;background:linear-gradient(to top, #2d5016, #4a7c2c);border-radius:3px}
+    .flower-petals{position:relative;width:300px;height:280px;display:flex;align-items:center;justify-content:center;margin:10px 0}
+    .petal-text{position:absolute;font-family:Poppins,sans-serif;font-weight:600;color:white;text-shadow:1px 1px 3px rgba(198,59,106,0.5);font-size:9px;padding:4px 8px;border-radius:12px;background:linear-gradient(135deg, #c63b6a, #e85a8a);animation:pulse 2s ease-in-out infinite;box-shadow:0 2px 8px rgba(198,59,106,0.3)}
+    .petal-text.quiz-word{background:linear-gradient(135deg, #ff1493, #ff69b4);font-weight:700;font-size:10px;padding:5px 10px;box-shadow:0 3px 12px rgba(255,20,147,0.5);text-shadow:2px 2px 4px rgba(255,20,147,0.6)}
+    @keyframes pulse{0%{transform:scale(1);opacity:0.8}50%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:0.8}}
+    .center-heart{position:absolute;width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:60px;animation:heartbeat 1.2s ease-in-out infinite;z-index:10}
+    @keyframes heartbeat{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+    .flower-buttons{position:relative;display:flex;gap:12px;z-index:10;margin-top:12px}
+    .accept-btn{background:linear-gradient(135deg, #c63b6a, #e85a8a);color:white;padding:10px 28px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-size:14px;transition:all 0.3s;box-shadow:0 6px 16px rgba(198,59,106,0.3);font-family:Poppins,sans-serif;letter-spacing:0.3px}
+    .accept-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(198,59,106,0.4)}
+    .accept-btn:active{transform:translateY(-1px)}
+    
+    /* Shared Carousel */
+    .shared-carousel-wrap{max-width:1400px;margin:40px auto 0;padding:0 24px}
+    .carousel-container{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px}
+    .carousel-btn-group{display:flex;gap:12px}
+    .shared-carousel{position:relative;display:flex;flex:1;align-items:center;overflow:hidden;max-width:100%}
+    .carousel-slides{display:flex;gap:20px;scroll-behavior:smooth;overflow-x:auto;scroll-snap-type:x mandatory;padding:20px 0;-webkit-overflow-scrolling:touch;width:100%;cursor:grab}
+    .carousel-slides:active{cursor:grabbing}
+    .carousel-slides::-webkit-scrollbar{height:6px}
+    .carousel-slides::-webkit-scrollbar-track{background:#f0f0f0;border-radius:10px}
+    .carousel-slides::-webkit-scrollbar-thumb{background:#c63b6a;border-radius:10px}
+    .share-card{flex:0 0 calc(100% - 40px);max-width:500px;background:white;border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(123,15,47,0.1);border:2px solid #f3e6ea;scroll-snap-align:start;user-select:none}
+    .card-header{font-family:'Playfair Display',serif;font-size:18px;color:#7b0f2f;font-weight:700;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #ffd6e0}
+    .card-content{color:#555;line-height:1.6;font-size:15px}
+    .card-content p{margin:8px 0}
+    .carousel-btn{background:linear-gradient(135deg, #c63b6a, #e85a8a);color:white;border:none;width:48px;height:48px;border-radius:50%;cursor:pointer;font-size:20px;font-weight:700;transition:all 0.3s;box-shadow:0 4px 12px rgba(198,59,106,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .carousel-btn:hover{background:linear-gradient(135deg, #a52f55, #c63b6a);transform:scale(1.1)}
+    .carousel-btn:active{transform:scale(0.95)}
+    .carousel-counter{text-align:center;color:#8a6b7c;font-size:13px;font-weight:600;margin-top:16px}
+    
+    /* Tablet: 1200px and below */
+    @media (max-width:1200px)
+      body{padding:24px 16px}
+      .topbar{font-size:14px}
+      .content-wrap{grid-template-columns:1fr;gap:24px;max-width:800px}
+      .portrait-section{order:2}
+      .final-section{order:1;padding:32px}
+      .final-section h1{font-size:28px}
+      .question-text{font-size:16px}
+      .option-btn{padding:14px 18px;font-size:15px}
+      .modal .card{width:90%;max-width:420px;padding:24px}
+      .modal h3{font-size:24px}
+      .flower-container{width:460px;height:580px;padding:24px}
+      .flower-header-name{font-size:24px}
+      .flower-header-text1{font-size:12px}
+      .flower-header-text2{font-size:14px}
+      .flower-petals{width:280px;height:260px}
+      .center-heart{font-size:50px}
+      .carousel-container{gap:16px}
+      .carousel-btn{width:44px;height:44px;font-size:18px}
+      .share-card{max-width:450px}
     }
+    
+    /* Mobile: 768px and below */
     @media (max-width:768px){
-      .topbar{flex-direction:column;gap:8px;margin-bottom:16px}
-      .back{font-size:14px}
-      .title-section h1{font-size:24px}
-      .content-wrap{grid-template-columns:1fr;gap:16px;max-width:100%}
       body{padding:16px 12px}
-      .carousel-wrap{margin:0 auto 24px;border-radius:12px}
-      .carousel{height:320px;border-radius:12px}
-      .slide img{max-height:300px}
-      .controls{left:8px;right:8px;top:8px}
-      .btn-ctrl{padding:8px 10px;font-size:12px;border-radius:6px}
-      .quiz-section,.table-section{padding:16px;border-radius:12px;margin-bottom:12px}
-      .quiz-section h2,.table-section h2{font-size:20px;margin-bottom:4px}
-      .quiz-subtitle{font-size:12px;margin-bottom:12px}
-      .section-header{margin-bottom:10px}
-      .section-header h3{font-size:15px}
-      .q{margin-bottom:10px;padding-bottom:10px}
-      .q label{font-size:13px}
-      .q select{padding:7px 8px;font-size:12px;border-radius:6px}
-      .quiz-actions{gap:6px;margin-top:12px;padding-top:10px}
-      .progress-text{font-size:11px}
-      .btn-primary,.btn-secondary{font-size:12px;padding:9px 12px}
-      table{font-size:12px}
-      th,td{padding:6px}
-      .slide-counter{font-size:11px;padding:4px 8px}
-      .modal .card{width:90%;max-width:360px;padding:20px}
+      .topbar{gap:8px;margin-bottom:16px}
+      .back{font-size:13px}
+      .content-wrap{gap:12px}
+      .portrait-container{max-width:100%;margin:0 0 16px}
+      .portrait-container img{max-width:100%}
+      .final-section{padding:24px;border-radius:14px}
+      .final-section h1{font-size:22px;margin-bottom:4px}
+      .final-emoji{font-size:24px;margin-bottom:12px}
+      .question-text{font-size:15px;margin:16px 0 24px}
+      .options{gap:10px}
+      .option-btn{padding:12px 14px;font-size:14px;border-radius:10px}
+      .modal{padding:16px}
+      .modal .card{width:95%;max-width:360px;padding:20px;border-radius:14px}
+      .modal h3{font-size:22px;margin-bottom:10px}
+      .modal p{font-size:14px}
+      .modal img{max-width:240px;margin:16px 0}
+      .close-btn{padding:10px 16px;font-size:13px;margin-top:12px}
+      .video-card{border-radius:12px}
+      .video-header{padding:16px;font-size:16px}
+      .video-close{font-size:20px}
+      .flower-container{width:calc(100vw - 32px);max-width:420px;height:auto;min-height:500px;padding:20px;border-radius:20px}
+      .flower-header{margin-bottom:10px}
+      .flower-header-name{font-size:22px;margin-bottom:2px}
+      .flower-header-text1{font-size:11px;margin:2px 0}
+      .flower-header-text2{font-size:13px;margin-top:2px;letter-spacing:1.5px}
+      .flower-petals{width:240px;height:220px;margin:8px 0}
+      .petal-text{font-size:8px;padding:3px 6px}
+      .center-heart{font-size:45px;width:60px;height:60px}
+      .flower-stem{width:5px;height:100px}
+      .flower-buttons{margin-top:10px}
+      .accept-btn{padding:9px 24px;font-size:13px;border-radius:9px}
+      .carousel-container{gap:12px;margin-bottom:12px}
+      .carousel-btn{width:40px;height:40px;font-size:16px}
+      .share-card{max-width:100%;flex:0 0 calc(100% - 24px)}
+      .card-header{font-size:16px}
+      .card-content{font-size:14px}
+      .carousel-counter{font-size:12px}
     }
+    
+    /* Small Mobile: 480px and below */
     @media (max-width:480px){
       body{padding:12px 8px}
-      .topbar{gap:4px;margin-bottom:12px}
+      .topbar{flex-direction:column;gap:6px;margin-bottom:12px}
       .back{font-size:12px}
-      .title-section h1{font-size:20px;margin:0}
-      .carousel-wrap{margin:0 auto 16px;border-radius:10px}
-      .carousel{height:260px;border-radius:10px}
-      .slide img{max-height:240px}
-      .controls{left:6px;right:6px;top:6px}
-      .btn-ctrl{padding:6px 8px;font-size:11px;border-radius:5px}
-      .slide-counter{font-size:10px;padding:3px 6px;bottom:8px;right:8px}
-      .content-wrap{gap:8px;max-width:100%}
-      .quiz-section,.table-section{padding:12px;border-radius:10px;margin-bottom:8px}
-      .quiz-section h2,.table-section h2{font-size:18px}
-      .quiz-subtitle{font-size:11px}
-      .section-header{margin-bottom:8px;padding-bottom:8px;gap:4px}
-      .section-header h3{font-size:13px}
-      .q{margin-bottom:8px;padding-bottom:8px}
-      .q label{font-size:12px;line-height:1.3}
-      .q select{padding:6px 6px;font-size:11px;border-radius:5px}
-      .quiz-actions{flex-direction:column;gap:4px;margin-top:8px;padding-top:8px}
-      .action-btns{width:100%;gap:4px}
-      .progress-text{font-size:10px}
-      .btn-primary,.btn-secondary{font-size:11px;padding:8px 10px;border-radius:6px}
-      table{font-size:10px}
-      th,td{padding:4px}
-      .table-actions{flex-wrap:wrap;gap:4px}
-      .last-saved{font-size:11px;padding:8px;margin-top:8px}
-      .modal{padding:12px}
-      .modal .card{width:95%;max-width:100%;padding:16px;border-radius:10px}
+      .content-wrap{gap:8px}
+      .final-section{padding:18px;border-radius:12px}
+      .final-section h1{font-size:20px}
+      .final-emoji{font-size:22px;margin-bottom:8px}
+      .question-text{font-size:14px;margin:12px 0 18px;line-height:1.5}
+      .options{gap:8px}
+      .option-btn{padding:11px 12px;font-size:13px;border-radius:8px}
+      .modal .card{width:96%;max-width:100%;padding:18px;border-radius:12px}
       .modal h3{font-size:20px;margin-bottom:8px}
-      .modal p{font-size:12px}
-      .modal img{max-width:180px}
+      .modal p{font-size:13px}
+      .modal img{max-width:200px}
+      .close-btn{padding:9px 14px;font-size:12px}
+      .flower-container{width:calc(100vw - 24px);max-width:380px;min-height:480px;padding:16px;border-radius:16px}
+      .flower-header-name{font-size:20px}
+      .flower-header-text1{font-size:10px}
+      .flower-header-text2{font-size:12px}
+      .flower-petals{width:220px;height:200px}
+      .petal-text{font-size:7px;padding:3px 5px}
+      .center-heart{font-size:40px;width:50px;height:50px}
+      .flower-stem{width:4px;height:80px}
+      .accept-btn{padding:8px 20px;font-size:12px}
+      .shared-carousel-wrap{margin:30px auto 0;padding:0 8px}
+      .carousel-container{gap:10px;flex-wrap:wrap}
+      .shared-carousel{width:100%}
+      .share-card{padding:20px;border-radius:12px;max-width:100%;flex:0 0 calc(100% - 16px)}
+      .card-header{font-size:14px;margin-bottom:12px}
+      .card-content{font-size:13px;line-height:1.5}
+      .carousel-btn{width:36px;height:36px;font-size:14px}
+      .carousel-counter{font-size:11px;margin-top:12px}
+    }
+    
+    /* Extra Small Mobile: 380px and below */
+    @media (max-width:380px){
+      .flower-container{width:calc(100vw - 20px);max-width:100%;min-height:440px;padding:14px;border-radius:14px}
+      .flower-header-name{font-size:18px}
+      .flower-header-text1{font-size:9px}
+      .flower-header-text2{font-size:11px;letter-spacing:1px}
+      .flower-petals{width:190px;height:180px;margin:6px 0}
+      .petal-text{font-size:6px;padding:2px 4px}
+      .center-heart{font-size:35px;width:45px;height:45px}
+      .flower-stem{width:4px;height:70px}
+      .flower-buttons{margin-top:8px;gap:8px}
+      .accept-btn{padding:7px 18px;font-size:11px;border-radius:7px}
+    }
+    
+    /* Tiny Mobile: 320px and below */
+    @media (max-width:320px){
+      .flower-container{width:calc(100vw - 16px);min-height:400px;padding:12px}
+      .flower-header-name{font-size:16px}
+      .flower-header-text1{font-size:8px}
+      .flower-header-text2{font-size:10px}
+      .flower-petals{width:170px;height:160px}
+      .petal-text{font-size:5px;padding:2px 3px}
+      .center-heart{font-size:30px;width:40px;height:40px}
+      .flower-stem{width:3px;height:60px}
+      .accept-btn{padding:6px 16px;font-size:10px}
     }
   </style>
 </head>
 <body>
-  <!-- Name Input Modal -->
-  <div class="modal" id="nameModal" style="display:flex">
-    <div class="card">
-      <div style="position:relative">
-        <h3 style="margin-top:0">Welcome! 💝</h3>
-        <div style="color:#8a6b7c;margin:8px 0;font-size:14px">What's your name?</div>
-        <input type="text" id="nameInput" placeholder="Enter your name" style="width:100%;padding:10px;margin:12px 0;border:1.5px solid #e9dfe4;border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box" required>
-        <div id="nameError" style="color:#d32f2f;font-size:12px;display:none;margin-top:4px">Name is required!</div>
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn-primary" id="startQuiz" style="flex:1;margin:0">Start Quiz</button>
-          <button class="btn-secondary" onclick="goHome()" style="flex:1">🏠 Home</button>
+  <div class="topbar">
+    <a href="game.html" class="back">← Back to Quiz</a>
+    <div style="flex:1"></div>
+    <a href="index.html" class="back" style="color:#c63b6a">🏠 Home</a>
+  </div>
+
+  <div class="content-wrap">
+    <!-- Left: Portrait -->
+    <div class="portrait-section">
+      <div class="portrait-container">
+        <img src="images/A1-removebg-preview.png" alt="Your portrait" />
+      </div>
+    </div>
+
+    <!-- Right: Final Question -->
+    <div class="final-section">
+      <div class="final-emoji">💖</div>
+      <h1>Final Question</h1>
+      <p class="question-text">Will you be my Valentine?</p>
+      <div class="options">
+        <button class="option-btn" onclick="selectOption('A')">A) Yes 💘</button>
+        <button class="option-btn" onclick="selectOption('B')">B) I'd love to 😍</button>
+        <button class="option-btn" onclick="selectOption('C')">C) Let's see where this goes 😉</button>
+        <button class="option-btn" onclick="selectOption('D')">D) No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Carousel Section -->
+  <div class="shared-carousel-wrap">
+    <h2 style="text-align:center;color:#7b0f2f;font-family:'Playfair Display',serif;margin:0 0 16px">💕 Our Love Story - Cricket & Romance 🏏</h2>
+    <div class="carousel-container">
+      <button class="carousel-btn" onclick="shareCarouselMove(-1)" title="Previous">❮</button>
+      <div class="shared-carousel">
+        <div class="carousel-slides" id="carouselSlides">
+        <!-- English Cards -->
+        <div class="share-card">
+          <div class="card-header">🏏 English</div>
+          <div class="card-content">
+            <p><strong>Love with you feels like Test cricket,</strong></p>
+            <p>No rush, no shortcuts — just trust, patience, and forever.</p>
+            <p>I don't want quick runs,</p>
+            <p>I want a lifetime partnership at the crease… with you.</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 English</div>
+          <div class="card-content">
+            <p><strong>Every match has pressure, every innings has lows,</strong></p>
+            <p>But with you on the other end,</p>
+            <p>I know we'll bat through everything —</p>
+            <p>Session by session, life by life.</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 English</div>
+          <div class="card-content">
+            <p><strong>I don't want to play alone anymore.</strong></p>
+            <p>I want a partner who runs with me,</p>
+            <p>Waits for me,</p>
+            <p>And stays till the last ball of life.</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 English</div>
+          <div class="card-content">
+            <p><strong>This isn't a T20 love.</strong></p>
+            <p>This is a Test match heart —</p>
+            <p>Slow, deep, and meant to last forever.</p>
+          </div>
+        </div>
+        
+        <!-- Hindi Cards -->
+        <div class="share-card">
+          <div class="card-header">🏏 हिंदी</div>
+          <div class="card-content">
+            <p><strong>Pyaar agar cricket hota,</strong></p>
+            <p>Toh main Test match chunta,</p>
+            <p>Kyunki tumhaare saath</p>
+            <p>Main sirf jeetna nahi…</p>
+            <p>Zindagi bhar saath khelna chahta hoon ❤️</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 हिंदी</div>
+          <div class="card-content">
+            <p><strong>Har innings mushkil hoti hai,</strong></p>
+            <p>Har match perfect nahi hota,</p>
+            <p>Par jab doosre end par tum ho,</p>
+            <p>Toh har pressure aasaan lagta hai.</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 हिंदी</div>
+          <div class="card-content">
+            <p><strong>Mujhe chhoti innings nahi chahiye,</strong></p>
+            <p>Mujhe woh partner chahiye</p>
+            <p>Jo last ball tak crease na chhode…</p>
+            <p>Aur woh tum ho 💫</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 हिंदी</div>
+          <div class="card-content">
+            <p><strong>Yeh naya match nahi,</strong></p>
+            <p>Yeh nayi zindagi ki shuruaat hai,</p>
+            <p>Aur main chahta hoon</p>
+            <p>Is match ka opening partner sirf tum ho ❤️</p>
+          </div>
+        </div>
+
+        <!-- Punjabi Cards -->
+        <div class="share-card">
+          <div class="card-header">🏏 ਪੰਜਾਬੀ</div>
+          <div class="card-content">
+            <p><strong>Ishq mere layi T20 nahi,</strong></p>
+            <p>Test match ae — sabar, bharosa te saath.</p>
+            <p>Je tu mere naal crease te ae,</p>
+            <p>Ta zindagi di koi ball mushkil nahi 🏏❤️</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 ਪੰਜਾਬੀ</div>
+          <div class="card-content">
+            <p><strong>Har match jeetna zaroori nahi,</strong></p>
+            <p>Par partner sahi hona zaroori ae.</p>
+            <p>Te main chaahunda haan</p>
+            <p>Zindagi da har over tere naal khedan 💫</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 ਪੰਜਾਬੀ</div>
+          <div class="card-content">
+            <p><strong>Tu mere layi sirf pyaar nahi,</strong></p>
+            <p>Tu meri opening partnership ae —</p>
+            <p>Jithe shuruaat vi tu,</p>
+            <p>Te anjaam vi tu ❤️</p>
+          </div>
+        </div>
+        <div class="share-card">
+          <div class="card-header">🏏 ਪੰਜਾਬੀ</div>
+          <div class="card-content">
+            <p><strong>Je zindagi cricket ae,</strong></p>
+            <p>Ta main sirf ik hi team chunn di haan —</p>
+            <p>Tu, main, te zindagi bhar da match 🫶</p>
+          </div>
+        </div>
         </div>
       </div>
+      <button class="carousel-btn" onclick="shareCarouselMove(1)" title="Next">❯</button>
     </div>
+    <div class="carousel-counter" id="shareCounter">1 / 12</div>
   </div>
 
-  <!-- Top bar -->
-  <div class="topbar">
-    <a class="back" href="index.html">← Back</a>
-    <div class="title-section">
-      <h1>💕 Let Me Know You Better 💕</h1>
-    </div>
-    <a class="back" href="index.html" style="color:#c63b6a">🏠 Home</a>
-  </div>
-
-  <!-- Carousel: Full width on top -->
-  <div class="carousel-wrap">
-    <div class="carousel">
-      <div class="controls">
-        <button class="btn-ctrl" id="prev">← Prev</button>
-        <button class="btn-ctrl" id="next">Next →</button>
-      </div>
-      <div class="slides" id="slides">
-        <!-- Using actual images from the images/ folder -->
-        <div class="slide"><img src="images/virat-kohli-and-anushka-sharma-1698729318.jpg" alt="slide1"></div>
-        <div class="slide"><img src="images/virat-kohli-anushka-sharma.jpg" alt="slide2"></div>
-        <div class="slide"><img src="images/Kohli-Anushka-4ITG-1748983672808-scaled.avif" alt="slide3"></div>
-        <div class="slide"><img src="images/bp896oc_anushka-sharma_625x300_02_June_25.webp" alt="slide4"></div>
-      </div>
-      <div class="slide-counter"><span id="slideNum">1</span> / 4</div>
-    </div>
-  </div>
-
-  <!-- Main content: Quiz (left) + Table (right) -->
-  <div class="content-wrap">
-    <!-- Left: Quiz -->
-    <div class="quiz-section">
-      <h2>Quiz</h2>
-      <div class="quiz-subtitle">(No right or wrong answers… just vibes 😌)</div>
-
-     <!-- Section 1 -->
-<div class="section active" id="section1">
-  <div class="section-header"><span>🌸</span> <h3>Section 1: Basic (4 Qs)</h3></div>
-
-  <div class="q">
-    <label>1. What kind of attention makes you feel most special?</label>
-    <select data-q="1">
-      <option value="">Select</option>
-      <option value="A">Sweet and caring moments 💗</option>
-      <option value="B">Playful teasing and smiles 😄</option>
-      <option value="C">Quiet time together 🌙</option>
-      <option value="D">A mix of sweet and flirty 😌</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>2. When someone flirts with you, what’s your first feeling?</label>
-    <select data-q="2">
-      <option value="">Select</option>
-      <option value="A">Shy but happy 😊</option>
-      <option value="B">Excited and curious 😏</option>
-      <option value="C">Warm and smiling inside 👀</option>
-      <option value="D">Confident and playful 💃</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>3. What attracts you to someone first?</label>
-    <select data-q="3">
-      <option value="">Select</option>
-      <option value="A">Kindness and care 💞</option>
-      <option value="B">Sense of humor 😄</option>
-      <option value="C">Eyes and smile 👁️✨</option>
-      <option value="D">Calm confidence 🔥</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>4. How do you usually show interest?</label>
-    <select data-q="4">
-      <option value="">Select</option>
-      <option value="A">Subtle hints and signals 😉</option>
-      <option value="B">More messages and replies 📱</option>
-      <option value="C">Sweet compliments 💌</option>
-      <option value="D">Clear and honest signs 😏</option>
-    </select>
-  </div>
-
-  <div class="quiz-actions">
-    <div class="progress-text">Section 1 / 3</div>
-    <div class="action-btns">
-      <button class="btn-secondary" id="skip1">Reset</button>
-      <button class="btn-primary" id="next1">Next →</button>
-    </div>
-  </div>
-</div>
-
-<!-- Section 2 -->
-<div class="section" id="section2">
-  <div class="section-header"><span>🔥</span> <h3>Section 2: Advanced (4 Qs)</h3></div>
-
-  <div class="q">
-    <label>5. What kind of flirting do you enjoy most?</label>
-    <select data-q="5">
-      <option value="">Select</option>
-      <option value="A">Cute and gentle 😇</option>
-      <option value="B">Playful and fun 😄</option>
-      <option value="C">Strong emotional tension 👀</option>
-      <option value="D">Bold but respectful 😏</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>6. When alone together, what do you prefer?</label>
-    <select data-q="6">
-      <option value="">Select</option>
-      <option value="A">Long deep talks 🌙</option>
-      <option value="B">Music and relaxed vibes 🎶</option>
-      <option value="C">Comfortable silence 💞</option>
-      <option value="D">Soft flirty moments 😌</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>7. What kind of compliment melts you the most?</label>
-    <select data-q="7">
-      <option value="">Select</option>
-      <option value="A">About my personality 💗</option>
-      <option value="B">About my smile 😊</option>
-      <option value="C">About how I make you feel 💫</option>
-      <option value="D">Soft words said privately 😏</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>8. In closeness, how do you feel about taking the lead?</label>
-    <select data-q="8">
-      <option value="">Select</option>
-      <option value="A">I prefer following 😊</option>
-      <option value="B">Depends on comfort 🤍</option>
-      <option value="C">I like switching roles 😉</option>
-      <option value="D">I can be bold when safe 😌</option>
-    </select>
-  </div>
-
-  <div class="quiz-actions">
-    <div class="progress-text">Section 2 / 3</div>
-    <div class="action-btns">
-      <button class="btn-secondary" id="back2">← Back</button>
-      <button class="btn-primary" id="next2">Next →</button>
-    </div>
-  </div>
-</div>
-
-<!-- Section 3 -->
-<div class="section" id="section3">
-  <div class="section-header"><span>😈</span> <h3>Section 3: Extreme (4 Qs)</h3></div>
-
-  <div class="q">
-    <label>9. What kind of romantic tension excites you most?</label>
-    <select data-q="9">
-      <option value="">Select</option>
-      <option value="A">Deep emotional connection 💕</option>
-      <option value="B">Eye contact and looks 👀</option>
-      <option value="C">Almost-touching moments 😏</option>
-      <option value="D">When words aren’t needed 🔥</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>10. When you imagine future intimacy, what feels right to you?</label>
-    <select data-q="10">
-      <option value="">Select</option>
-      <option value="A">Curious but shy 😊</option>
-      <option value="B">Slow and emotional 🌙</option>
-      <option value="C">Trust matters most 💞</option>
-      <option value="D">Playful conversations first 😈</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>11. What best describes your hidden romantic side?</label>
-    <select data-q="11">
-      <option value="">Select</option>
-      <option value="A">Soft and romantic 🌹</option>
-      <option value="B">Teasing and fun 😌</option>
-      <option value="C">Deep and intense 🔥</option>
-      <option value="D">Mysterious 😏</option>
-    </select>
-  </div>
-
-  <div class="q">
-    <label>12. In a future close moment, what would you most want to feel?</label>
-    <select data-q="12">
-      <option value="">Select</option>
-      <option value="A">Chosen and valued 💗</option>
-      <option value="B">Admired and desired 😊</option>
-      <option value="C">Gently flirted with 😘</option>
-    </select>
-    <textarea data-q="12-text" placeholder="Or write in your own words here... 💭"></textarea>
-  </div>
-
-  <div class="quiz-actions">
-    <div class="progress-text">Section 3 / 3</div>
-    <div class="action-btns">
-      <button class="btn-secondary" id="back3">← Back</button>
-      <button class="btn-primary" id="finish">✨ Finish</button>
-    </div>
-  </div>
-</div>
-
-
-    <!-- Right: Answers Table -->
-    <div class="table-section">
-      <h2>Recorded Answers</h2>
-      <div class="table-subtitle">Your responses will appear here</div>
-      <div class="table-actions">
-        <button class="btn-secondary" id="downloadCsv">Download responses (CSV)</button>
-        <div id="savedCount">Saved responses: 0</div>
-      </div>
-      <div class="table-container">
-        <table id="answersTable">
-          <thead>
-            <tr>
-              <th style="width:40px">#</th>
-              <th>Question</th>
-              <th>Answer</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="last-saved" id="lastSaved" style="display:none"></div>
-    </div>
-  </div>
-
-  <!-- Modal: Wrong answer -->
-  <div class="modal" id="modal">
+  <!-- Wrong Answer Modal (No) -->
+  <div class="modal" id="wrongModal">
     <div class="card">
       <h3>Waah shampy Wahh 😏</h3>
-      <div style="color:#8a6b7c;margin:8px 0">Nice try!</div>
-      <img src="https://i.imgur.com/OY6m6Gv.png" alt="cringe baby" />
-      <button class="close-btn" id="closeModal">Understood!</button>
+      <p>Try again — Wrong selection!</p>
+      <img src="images/waah shampy waah.jpg" alt="wrong answer" />
+      <button class="close-btn" onclick="closeWrongModal()">Understood!</button>
       <button class="close-btn" onclick="goHome()" style="background:#6b6b6b;margin-left:8px">🏠 Go Home</button>
     </div>
   </div>
 
+  <!-- Video Modal -->
+  <div class="video-modal" id="videoModal">
+    <div class="video-card">
+      <div class="video-header">
+        <span>Now Playing...</span>
+        <button class="video-close" onclick="closeVideoModal()">✕</button>
+      </div>
+      <div class="video-frame" id="videoFrame"></div>
+    </div>
+  </div>
+
+  <!-- Flower Bouquet Modal (for Yes) -->
+  <div class="flower-modal" id="flowerModal">
+    <div class="flower-container">
+      <div class="flower-header">
+        <div class="flower-header-name" id="recipientName"></div>
+        <div class="flower-header-text1">Ayeeee Cutieee Kr hi di YES FR 💕</div>
+        <div class="flower-header-text2">Uff</div>
+      </div>
+      <div class="flower-petals" id="flowerPetals">
+        <div class="center-heart">💕</div>
+      </div>
+      <div class="flower-stem"></div>
+      <div class="flower-buttons">
+        <button class="accept-btn" onclick="acceptFlower()">🎉 Accept 💐</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // ==================== CONFIGURE THIS ====================
-    // Replace with your Google Apps Script Web App URL
-    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzbzAFopRUPv1D4X_YNKpyR-ESsDiSjp019EfVQ0JPgCvtJAltCVMNBjfDf9Y-1iXfuZA/exec';
-    // =========================================================
-
-    let respondentName = '';
-    const answers = {};
-    const LOCAL_KEY = 'valentineQuizResponsesV1';
-
-    // ==================== NAME MODAL ====================
-    document.getElementById('startQuiz').addEventListener('click', () => {
-      respondentName = document.getElementById('nameInput').value.trim();
-      const errorDiv = document.getElementById('nameError');
-      
-      if(!respondentName){
-        errorDiv.style.display = 'block';
-        return;
-      }
-      
-      errorDiv.style.display = 'none';
-      // Store name in sessionStorage to pass to final.html
-      sessionStorage.setItem('respondentName', respondentName);
-      document.getElementById('nameModal').style.display = 'none';
-    });
-
-    // Handle Enter key in name input
-    document.getElementById('nameInput').addEventListener('keypress', (e) => {
-      if(e.key === 'Enter') document.getElementById('startQuiz').click();
-    });
-
-    // ==================== LOCAL STORAGE ====================
-    function getLocalResponses(){
-      try{
-        return JSON.parse(localStorage.getItem(LOCAL_KEY)) || [];
-      }catch(e){
-        return [];
-      }
-    }
-
-    function saveLocalResponse(){
-      const list = getLocalResponses();
-      const cleanName = respondentName ? respondentName.trim() : 'Anonymous';
-      list.push({
-        name: cleanName,
-        answers: {...answers}
-      });
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
-      updateSavedUI(list);
-    }
-
-    function updateSavedUI(list){
-      const savedCountEl = document.getElementById('savedCount');
-      const lastSavedEl = document.getElementById('lastSaved');
-      if(savedCountEl) savedCountEl.textContent = `Saved responses: ${list.length}`;
-      if(!lastSavedEl) return;
-      if(!list.length){
-        lastSavedEl.style.display = 'none';
-        lastSavedEl.textContent = '';
-        return;
-      }
-      const last = list[list.length - 1];
-      const answerPreview = Object.keys(last.answers)
-        .sort((a,b)=>Number(a)-Number(b))
-        .map(q => `Q${q}: ${last.answers[q] || ''}`)
-        .join(' · ');
-      lastSavedEl.style.display = 'block';
-      lastSavedEl.textContent = `Last saved — ${last.name}: ${answerPreview}`;
-    }
-
-    function downloadCsv(){
-      const list = getLocalResponses();
-      if(!list.length){
-        alert('No saved responses yet.');
-        return;
-      }
-      const headers = ['Name'];
-      for(let i=1;i<=12;i++) headers.push(`Q${i}`);
-      const rows = [headers.join(',')];
-      list.forEach(item => {
-        const row = [item.name || 'Anonymous'];
-        for(let i=1;i<=12;i++) row.push(item.answers?.[i] || '');
-        rows.push(row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
-      });
-      const csv = rows.join('\n');
-      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'quiz-responses.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    document.getElementById('downloadCsv').addEventListener('click', downloadCsv);
-    updateSavedUI(getLocalResponses());
-    const slides = document.getElementById('slides');
-    const slideElems = slides.querySelectorAll('.slide');
-    let idx = 0;
-
-    function showSlide(){
-      slides.style.transform = `translateX(${-idx * 100}%)`;
-      document.getElementById('slideNum').textContent = idx + 1;
-    }
-
-    document.getElementById('prev').addEventListener('click', ()=>{
-      idx = (idx - 1 + slideElems.length) % slideElems.length;
-      showSlide();
-    });
-
-    document.getElementById('next').addEventListener('click', ()=>{
-      idx = (idx + 1) % slideElems.length;
-      showSlide();
-    });
-
-    // Auto-advance carousel every 5s
-    setInterval(()=>{ idx = (idx + 1) % slideElems.length; showSlide(); }, 5000);
-
-    // ==================== QUIZ LOGIC ====================
-    const questionTexts = {
-      1: 'What kind of attention do you enjoy?',
-      2: 'When someone flirts, you feel…',
-      3: 'What attracts first?',
-      4: 'How express interest?',
-      5: 'What flirting style?',
-      6: 'Alone together, prefer?',
-      7: 'What compliments melt you?',
-      8: 'Taking the lead?',
-      9: 'What tension excites?',
-      10: 'Exploring fantasies?',
-      11: 'Secret vibe?',
-      12: 'Most desired feeling?'
+    const videoFiles = {
+      'A': 'videos/YTDown.com_YouTube_DIL-OFFCIAL-VIDEO-NINJA-FT-SARA-GURPAL-L_Media_SgiXvLBTm8I_001_1080p%20(1).mp4',
+      'B': 'videos/YTDown.com_YouTube_ENNA-KHUSH-RAKHUNGA-Full-Song-SUCHAYAAR-_Media_P96wpAJEJXw_001_1080p%20(2).mp4',
+      'C': 'videos/YTDown.com_YouTube_Mohabbat-B-Praak-Gurnam-Bhullar-Isha-Mal_Media_HYzwCiIsrHs_001_1080p%20(1).mp4'
     };
 
-    const optionMap = {
-      '1': {'A':'Sweet and caring 💗','B':'Playful teasing 😄','C':'Quiet moments 🌙','D':'Mix of sweet & flirty 😌'},
-      '2': {'A':'Shy but happy 😊','B':'Excited 😏','C':'Curious 👀','D':'Confident 💃'},
-      '3': {'A':'Kindness 💞','B':'Humor 😄','C':'Eyes & smile 👁️✨','D':'Confidence 🔥'},
-      '4': {'A':'Subtle hints 😉','B':'Text more 📱','C':'Compliments 💌','D':'Clear signals 😏'},
-      '5': {'A':'Cute 😇','B':'Playful 😄','C':'Intense tension 👀','D':'Bold 😏'},
-      '6': {'A':'Talk hours 🌙','B':'Music vibes 🎶','C':'Comfortable silence 💞','D':'Flirty moments 😌'},
-      '7': {'A':'Personality 💗','B':'Smile 😊','C':'How I make feel 💫','D':'Soft whispered 😏'},
-      '8': {'A':'Prefer following 😊','B':'Depends 🤍','C':'Enjoy switching 😉','D':'Bold when safe 😌'},
-      '9': {'A':'Emotional 💕','B':'Looks 👀','C':'Almost-touching 😏','D':'Words unnecessary 🔥'},
-      '10':{'A':'Curious, shy 😊','B':'Slow open 🌙','C':'Trust needed 💞','D':'Playful talks 😈'},
-      '11':{'A':'Romantic 🌹','B':'Teasing 😌','C':'Intense 🔥','D':'Keep guessing 😏'},
-      '12':{'A':'Chosen 💗','B':'Admired 😊','C':'Flirted boldly 😘','D':'Understood 😈'}
-    };
+    let selectedChoice = '';
 
-    function collectValues(sectionEl){
-      const selects = sectionEl.querySelectorAll('select[data-q]');
-      const missing = [];
-      selects.forEach(s => { if(!s.value) missing.push(s.dataset.q); });
-      if(missing.length) return {ok:false};
-      selects.forEach(s => { 
-        answers[s.dataset.q] = s.value; 
-        updateTableRow(s.dataset.q, s.value);
-      });
-      return {ok:true};
+    function selectOption(choice){
+      if(choice === 'D'){
+        document.getElementById('wrongModal').classList.add('show');
+      } else if(choice === 'A'){
+        selectedChoice = 'A';
+        createFlowerBouquet();
+      } else if(['B', 'C'].includes(choice)){
+        playVideo(choice);
+      }
     }
 
-    function updateTableRow(q, val){
-      const tbody = document.querySelector('#answersTable tbody');
-      let row = document.querySelector(`#row-${q}`);
-      const text = (optionMap[q] && optionMap[q][val]) ? optionMap[q][val] : val;
-      if(row){ row.children[2].textContent = text; return; }
-      row = document.createElement('tr');
-      row.id = `row-${q}`;
-      row.innerHTML = `<td>${q}</td><td>${questionTexts[q]}</td><td>${text}</td>`;
-      tbody.appendChild(row);
+    function createFlowerBouquet(){
+      const petals = document.getElementById('flowerPetals');
+      petals.innerHTML = '';
+      
+      // Get respondent name from sessionStorage (passed from game.html)
+      const respondentName = sessionStorage.getItem('respondentName') || 'My Love';
+      document.getElementById('recipientName').textContent = respondentName;
+      
+      // Get quiz answer words from sessionStorage
+      let quizAnswerWords = [];
+      try {
+        const stored = sessionStorage.getItem('quizAnswerWords');
+        if(stored) {
+          quizAnswerWords = JSON.parse(stored).filter(w => w.length > 0);
+        }
+      } catch(e) {
+        console.warn('Could not retrieve quiz answers');
+      }
+      
+      // Base romantic words pool
+      const romanticWords = ['Yes', 'Forever', 'Always', 'Love', 'You', 'Mine', 'Dreams', 'Smile', 'Joy', 'Hope', 'Heart', 'Beautiful', 'Kiss', 'Hold'];
+      
+      // Create separate arrays for quiz and filler words
+      const wordArray = [];
+      const quizWordList = [];
+      const fillerWordList = [];
+      
+      // Build quiz word list (85-90 appearances)
+      if(quizAnswerWords.length > 0) {
+        const uniqueAnswerWords = [...new Set(quizAnswerWords)];
+        for(let i = 0; i < Math.ceil(85 / uniqueAnswerWords.length); i++) {
+          uniqueAnswerWords.forEach(word => {
+            quizWordList.push({text: word, isQuizWord: true});
+          });
+        }
+      }
+      
+      // Build filler word list
+      while(fillerWordList.length < 30) {
+        romanticWords.forEach(word => {
+          if(fillerWordList.length < 30) {
+            fillerWordList.push({text: word, isQuizWord: false});
+          }
+        });
+      }
+      
+      // STRATEGY: Put quiz words in inner rings (top/visible), fillers in outer rings
+      // Inner core (12 words) - ALL QUIZ WORDS
+      for(let i = 0; i < 12 && i < quizWordList.length; i++) {
+        wordArray.push(quizWordList[i]);
+      }
+      
+      // Inner ring (24 words) - MOSTLY QUIZ WORDS (20) + few fillers (4)
+      for(let i = 0; i < 20 && i + 12 < quizWordList.length; i++) {
+        wordArray.push(quizWordList[i + 12]);
+      }
+      for(let i = 0; i < 4; i++) {
+        wordArray.push(fillerWordList[i]);
+      }
+      
+      // Middle ring (36 words) - REST OF QUIZ + MORE FILLERS
+      const remainingQuiz = quizWordList.slice(32);
+      for(let i = 0; i < remainingQuiz.length && wordArray.length < 72; i++) {
+        wordArray.push(remainingQuiz[i]);
+      }
+      while(wordArray.length < 72) {
+        fillerWordList.forEach(word => {
+          if(wordArray.length < 72) {
+            wordArray.push(word);
+          }
+        });
+      }
+      
+      // Outer ring (48 words) - FILL WITH FILLERS
+      while(wordArray.length < 120) {
+        fillerWordList.forEach(word => {
+          if(wordArray.length < 120) {
+            wordArray.push(word);
+          }
+        });
+      }
+      
+      // Trim to exactly 120
+      wordArray.length = 120;
+      
+      let wordIndex = 0;
+      
+      // Create flower with concentric rings of words
+      const rings = [
+        {radius: 30, count: 12, fontSize: 10, delay: 0},       // Inner core - 12 quiz words at TOP
+        {radius: 55, count: 24, fontSize: 9, delay: 0.02},     // Inner ring - 20 quiz words VISIBLE
+        {radius: 85, count: 36, fontSize: 8, delay: 0.04},     // Middle ring
+        {radius: 115, count: 48, fontSize: 8, delay: 0.06}     // Outer ring
+      ];
+      
+      rings.forEach(ring => {
+        for(let i = 0; i < ring.count; i++){
+          const angle = (i / ring.count) * Math.PI * 2;
+          const x = Math.cos(angle) * ring.radius;
+          const y = Math.sin(angle) * ring.radius;
+          
+          const wordObj = wordArray[wordIndex % wordArray.length];
+          const petal = document.createElement('div');
+          petal.className = 'petal-text' + (wordObj.isQuizWord ? ' quiz-word' : '');
+          petal.textContent = wordObj.text;
+          petal.style.left = `calc(50% + ${x}px)`;
+          petal.style.top = `calc(50% + ${y}px)`;
+          petal.style.transform = `translate(-50%, -50%)`;
+          petal.style.animationDelay = `${ring.delay + (i * 0.01)}s`;
+          petal.style.whiteSpace = 'nowrap';
+          petals.appendChild(petal);
+          wordIndex++;
+        }
+      });
+      
+      document.getElementById('flowerModal').classList.add('show');
     }
 
-    // Section navigation
-    document.getElementById('next1').addEventListener('click', ()=>{
-      if(!collectValues(document.getElementById('section1')).ok){
-        alert('⚠️ Please answer all questions in Section 1');
-        return;
+    function acceptFlower(){
+      document.getElementById('flowerModal').classList.remove('show');
+      playVideo('A');
+    }
+
+    function closeWrongModal(){
+      document.getElementById('wrongModal').classList.remove('show');
+    }
+
+    function playVideo(choice){
+      const videoFile = videoFiles[choice];
+      if(videoFile){
+        const videoFrame = document.getElementById('videoFrame');
+        videoFrame.innerHTML = `<video controls autoplay><source src="${videoFile}" type="video/mp4">Your browser doesn't support HTML5 video.</video>`;
+        document.getElementById('videoModal').classList.add('show');
       }
-      document.getElementById('section1').classList.remove('active');
-      document.getElementById('section2').classList.add('active');
-    });
+    }
 
-    document.getElementById('back2').addEventListener('click', ()=>{
-      document.getElementById('section2').classList.remove('active');
-      document.getElementById('section1').classList.add('active');
-    });
-
-    document.getElementById('next2').addEventListener('click', ()=>{
-      if(!collectValues(document.getElementById('section2')).ok){
-        alert('⚠️ Please answer all questions in Section 2');
-        return;
-      }
-      document.getElementById('section2').classList.remove('active');
-      document.getElementById('section3').classList.add('active');
-    });
-
-    document.getElementById('back3').addEventListener('click', ()=>{
-      document.getElementById('section3').classList.remove('active');
-      document.getElementById('section2').classList.add('active');
-    });
-
-    document.getElementById('finish').addEventListener('click', ()=>{
-      if(!collectValues(document.getElementById('section3')).ok){
-        alert('⚠️ Please answer all questions in Section 3');
-        return;
-      }
-      saveLocalResponse();
-      // Send data to Google Sheets via Apps Script
-      submitToGoogleSheet();
-      alert('✨ Thank you! All answers recorded. Check the table on the right!');
-      document.querySelector('.table-container').scrollIntoView({behavior:'smooth'});
-      setTimeout(() => {
-        const goFurther = confirm('💖 Ready for the final question? 💖');
-        if(goFurther) window.location.href = 'final.html';
-      }, 1000);
-    });
-
-    document.getElementById('skip1').addEventListener('click', ()=>{
-      document.querySelectorAll('#section1 select').forEach(s => s.value = '');
-    });
-
-    document.getElementById('closeModal').addEventListener('click', ()=>{
-      document.getElementById('modal').style.display = 'none';
-    });
-
-    // ==================== GOOGLE SHEETS SUBMISSION ====================
-    function submitToGoogleSheet(){
-      if(!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){
-        console.warn('⚠️ Google Apps Script URL not configured.');
-        return;
-      }
-      
-      // Send name + all 12 answers (full text)
-      const payload = {
-        name: respondentName,
-        answers: {},
-        questions: questionTexts
-      };
-
-      // Collect all answer texts and store in sessionStorage for flower
-      const allAnswerTexts = [];
-      for(let i = 1; i <= 12; i++){
-        const ansKey = answers[i];
-        const optionText = (optionMap[i] && optionMap[i][ansKey]) ? optionMap[i][ansKey] : '';
-        payload.answers[i] = optionText;
-        // Extract just the key words from answer (remove emojis for variety)
-        const words = optionText.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim().split(/\s+/);
-        allAnswerTexts.push(...words);
-      }
-      
-      // Store answer words in sessionStorage for the flower
-      sessionStorage.setItem('quizAnswerWords', JSON.stringify(allAnswerTexts));
-
-      fetch(GOOGLE_APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        keepalive: true,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(response => {
-        console.log('✅ Responses submitted to Google Sheets');
-      })
-      .catch(error => {
-        console.warn('⚠️ Could not submit to Google Sheets:', error);
-      });
+    function closeVideoModal(){
+      document.getElementById('videoModal').classList.remove('show');
+      document.getElementById('videoFrame').innerHTML = '';
     }
 
     function goHome(){
       window.location.href = 'index.html';
+    }    
+    
+    let shareCarouselIndex = 0;
+    const totalShareCards = 12;
+    let isDragging = false;
+    let startX = 0;
+    let scrollStart = 0;
+    
+    function shareCarouselMove(direction) {
+        const slides = document.getElementById('carouselSlides');
+        const cards = document.querySelectorAll('.share-card');
+        
+        if(cards.length === 0) return;
+        
+        shareCarouselIndex += direction;
+        
+        // Loop around
+        if (shareCarouselIndex >= totalShareCards) {
+            shareCarouselIndex = 0;
+        } else if (shareCarouselIndex < 0) {
+            shareCarouselIndex = totalShareCards - 1;
+        }
+        
+        // Scroll to the current card
+        const cardWidth = cards[0].offsetWidth + 20; // 20px gap
+        slides.scrollLeft = shareCarouselIndex * cardWidth;
+        
+        // Update counter
+        document.getElementById('shareCounter').textContent = (shareCarouselIndex + 1) + ' / ' + totalShareCards;
     }
-  </script>
+    
+    // Drag and swipe functionality
+    const carouselSlides = document.getElementById('carouselSlides');
+    
+    carouselSlides.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.pageX;
+        scrollStart = carouselSlides.scrollLeft;
+        carouselSlides.style.scrollBehavior = 'auto';
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const walk = (e.pageX - startX) * 1.5;
+        carouselSlides.scrollLeft = scrollStart - walk;
+    });
+    
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        carouselSlides.style.scrollBehavior = 'smooth';
+        updateCarouselCounter();
+    });
+    
+    carouselSlides.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        startX = e.touches[0].clientX;
+        scrollStart = carouselSlides.scrollLeft;
+        carouselSlides.style.scrollBehavior = 'auto';
+    }, false);
+    
+    document.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const walk = (e.touches[0].clientX - startX) * 1.5;
+        carouselSlides.scrollLeft = scrollStart - walk;
+    }, false);
+    
+    document.addEventListener('touchend', () => {
+        isDragging = false;
+        carouselSlides.style.scrollBehavior = 'smooth';
+        updateCarouselCounter();
+    });
+    
+    function updateCarouselCounter() {
+        const slides = document.getElementById('carouselSlides');
+        const cards = document.querySelectorAll('.share-card');
+        if(cards.length === 0) return;
+        
+        const cardWidth = cards[0].offsetWidth + 20;
+        const currentIndex = Math.round(slides.scrollLeft / cardWidth);
+        shareCarouselIndex = Math.min(currentIndex, totalShareCards - 1);
+        document.getElementById('shareCounter').textContent = (shareCarouselIndex + 1) + ' / ' + totalShareCards;
+    }  </script>
 </body>
 </html>
-
