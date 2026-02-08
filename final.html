@@ -96,7 +96,7 @@
     .carousel-counter{text-align:center;color:#8a6b7c;font-size:13px;font-weight:600;margin-top:16px}
     
     /* Tablet: 1200px and below */
-    @media (max-width:1200px){
+    @media (max-width:1200px)
       body{padding:24px 16px}
       .topbar{font-size:14px}
       .content-wrap{grid-template-columns:1fr;gap:24px;max-width:800px}
@@ -194,6 +194,33 @@
       .card-content{font-size:13px;line-height:1.5}
       .carousel-btn{width:36px;height:36px;font-size:14px}
       .carousel-counter{font-size:11px;margin-top:12px}
+    }
+    
+    /* Extra Small Mobile: 380px and below */
+    @media (max-width:380px){
+      .flower-container{width:calc(100vw - 20px);max-width:100%;min-height:440px;padding:14px;border-radius:14px}
+      .flower-header-name{font-size:18px}
+      .flower-header-text1{font-size:9px}
+      .flower-header-text2{font-size:11px;letter-spacing:1px}
+      .flower-petals{width:190px;height:180px;margin:6px 0}
+      .petal-text{font-size:6px;padding:2px 4px}
+      .center-heart{font-size:35px;width:45px;height:45px}
+      .flower-stem{width:4px;height:70px}
+      .flower-buttons{margin-top:8px;gap:8px}
+      .accept-btn{padding:7px 18px;font-size:11px;border-radius:7px}
+    }
+    
+    /* Tiny Mobile: 320px and below */
+    @media (max-width:320px){
+      .flower-container{width:calc(100vw - 16px);min-height:400px;padding:12px}
+      .flower-header-name{font-size:16px}
+      .flower-header-text1{font-size:8px}
+      .flower-header-text2{font-size:10px}
+      .flower-petals{width:170px;height:160px}
+      .petal-text{font-size:5px;padding:2px 3px}
+      .center-heart{font-size:30px;width:40px;height:40px}
+      .flower-stem{width:3px;height:60px}
+      .accept-btn{padding:6px 16px;font-size:10px}
     }
   </style>
 </head>
@@ -394,9 +421,9 @@
 
   <script>
     const videoFiles = {
-      'A': 'videos/WhatsApp Video 2026-02-06 at 2.32.16 PM.mp4',
-      'B': 'videos/WhatsApp Video 2026-02-06 at 2.10.12 PM.mp4',
-      'C': 'videos/WhatsApp Video 2026-02-06 at 2.09.54 PM.mp4'
+      'A': 'videos/YTDown.com_YouTube_DIL-OFFCIAL-VIDEO-NINJA-FT-SARA-GURPAL-L_Media_SgiXvLBTm8I_001_1080p%20(1).mp4',
+      'B': 'videos/YTDown.com_YouTube_ENNA-KHUSH-RAKHUNGA-Full-Song-SUCHAYAAR-_Media_P96wpAJEJXw_001_1080p%20(2).mp4',
+      'C': 'videos/YTDown.com_YouTube_Mohabbat-B-Praak-Gurnam-Bhullar-Isha-Mal_Media_HYzwCiIsrHs_001_1080p%20(1).mp4'
     };
 
     let selectedChoice = '';
@@ -639,6 +666,3 @@
     }  </script>
 </body>
 </html>
-
-
-
